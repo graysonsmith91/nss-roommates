@@ -129,7 +129,7 @@ namespace Roommates.Repositories
         }
 
         // Method inserts assigned chore to the RoommateChore data table
-        public void InsertChore(int roommateId, int choreId)
+        public void AssignChore(int roommateId, int choreId)
         {
             using (SqlConnection conn = Connection)
             {
@@ -143,6 +143,52 @@ namespace Roommates.Repositories
                     cmd.Parameters.AddWithValue("@ChoreId", choreId);
                     int id = (int)cmd.ExecuteScalar();
 
+                }
+            }
+        }
+
+        public void Update(Chore chore)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Chore
+                                    SET Name = @name
+                                    WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@name", chore.Name);
+                    cmd.Parameters.AddWithValue("@id", chore.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Chore WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteChoreAssignment(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM RoommateChore WHERE RoommateChore.ChoreId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
